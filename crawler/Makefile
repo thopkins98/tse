@@ -1,4 +1,7 @@
-CFLAGS=-Wall -pedantic -std=11 -I~/ENGS50/tse/utils -L~/ENGS50/tse/lib -g
+L=../lib
+U=../utils
+
+CFLAGS=-Wall -pedantic -std=c11 -I$(U) -L$(L) -g
 LIBS=-lutils -lcurl
 
 crawler:
