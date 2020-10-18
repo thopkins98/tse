@@ -1,4 +1,4 @@
-/* crawler.c --- 
+/* crawler2.c --- 
  * 
  * 
  * Author: Trevor S. Hopkins
@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "webpage.h"
+#include "queue.h"
+
+
+void printURL(void *wp);
 
 int main(void){
 
@@ -20,9 +25,12 @@ int main(void){
 	//const int depth = 0;
 	char *seed = "https://thayer.github.io/engs50/";
 	
-	struct webpage *w1 = webpage_new(seed, 0, NULL);
-	struct queue *pagequeue = qopen();
-		
+	webpage_t *w1 = webpage_new(seed, 0, NULL);
+	queue_t *pagequeue = qopen();
+
+	//char *url= webpage_getURL(w1);
+	//printf("%s", url);
+	
 	bool check = false;
 	check = webpage_fetch(w1);
 
@@ -39,33 +47,44 @@ int main(void){
 	
 	while ((pos = webpage_getNextURL(w1, pos, &result)) > 0) {
 
-		internal = IsInternalURL(result);
-		printf("Found url: %s", result);
-		if (internal == true) {
-			printf(" This URL is Internal\n");
-			struct webpage *page = webpage_new(result, counter, NULL);
-			qput(pagequeue, (void*)page);
-		}else {
-			printf(" This URL is not Internal\n");
-		}
-		free (result);
-		webpage_delete((void *)page);
+	internal = IsInternalURL(result);
+	printf("Found url: %s\n", result);
+	if (internal == true) {
+		printf(" This URL is Internal\n");
+		webpage_t *iwp= webpage_new(result, counter, NULL);
+		qput(pagequeue, (void*) iwp);
+		webpage_delete((void *) iwp);
+	}else {
+		printf(" This URL is not Internal\n");
+	}
+	free(result);
 	}
 
 	webpage_delete((void *)w1);
 	
 	//print queue here
+	//qapply(pagequeue, printURL);
 
-	struct webpage *printpage = NULL;
-	char *urltoprint = NULL;
-	while (pagequeue->front != NULL){
-		printpage = (webpage_t *)qget(pagequeue);
-		urltoprint = printpage->url;
-		fprint("%s\n", urltoprint);
-		webpage_delete((void *)printpage);
+	webpage_t *wbtoprint= NULL;
+	char *urltoprint= NULL; 
+	
+	while (pagequeue != NULL ){
+		wbtoprint = (webpage_t *)qget(pagequeue);
+		urltoprint = webpage_getURL(wbtoprint);
+		printf("%s\n", urltoprint);
+		webpage_delete((void *)wbtoprint);
+ 
 	}
 
 	qclose(pagequeue);
 	
 	return 0;
+}
+
+
+void printURL(void *wp){
+
+	char *str= webpage_getURL( (webpage_t *) wp);
+	printf("%s", str);
+
 }
