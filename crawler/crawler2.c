@@ -1,3 +1,4 @@
+
 /* crawler2.c --- 
  * 
  * 
@@ -53,7 +54,7 @@ int main(void){
 		printf(" This URL is Internal\n");
 		webpage_t *iwp= webpage_new(result, counter, NULL);
 		qput(pagequeue, (void*) iwp);
-		webpage_delete((void *) iwp);
+	
 	}else {
 		printf(" This URL is not Internal\n");
 	}
@@ -66,14 +67,19 @@ int main(void){
 	//qapply(pagequeue, printURL);
 
 	webpage_t *wbtoprint= NULL;
-	char *urltoprint= NULL; 
+	char *urltoprint= NULL;
 	
 	while (pagequeue != NULL ){
+		
 		wbtoprint = (webpage_t *)qget(pagequeue);
+
+		if ( wbtoprint == NULL ) {
+			break;
+		}
 		urltoprint = webpage_getURL(wbtoprint);
 		printf("%s\n", urltoprint);
 		webpage_delete((void *)wbtoprint);
- 
+		//free(urltoprint);
 	}
 
 	qclose(pagequeue);
