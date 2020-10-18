@@ -22,14 +22,12 @@ int main(void){
 
 	printf("hello\n");
 
-	//const int depth = 0;
+
 	char *seed = "https://thayer.github.io/engs50/";
 	
 	webpage_t *w1 = webpage_new(seed, 0, NULL);
 	queue_t *pagequeue = qopen();
 
-	//char *url= webpage_getURL(w1);
-	//printf("%s", url);
 	
 	bool check = false;
 	check = webpage_fetch(w1);
@@ -52,8 +50,8 @@ int main(void){
 	if (internal == true) {
 		printf(" This URL is Internal\n");
 		webpage_t *iwp= webpage_new(result, counter, NULL);
-		qput(pagequeue, (void*) iwp);
-		webpage_delete((void *) iwp);
+		qput(pagequeue, (void *) iwp);
+		//webpage_delete((void *) iwp);
 	}else {
 		printf(" This URL is not Internal\n");
 	}
@@ -64,14 +62,13 @@ int main(void){
 	
 	//print queue here
 	//qapply(pagequeue, printURL);
-
-	webpage_t *wbtoprint= NULL;
-	char *urltoprint= NULL; 
 	
-	while (pagequeue != NULL ){
-		wbtoprint = (webpage_t *)qget(pagequeue);
-		urltoprint = webpage_getURL(wbtoprint);
-		printf("%s\n", urltoprint);
+	webpage_t *wbtoprint= NULL;
+	printf("From queue:\n");
+	
+	while ((wbtoprint = (webpage_t *)qget(pagequeue)) != NULL ){
+	
+		printf("%s\n", webpage_getURL(wbtoprint));
 		webpage_delete((void *)wbtoprint);
  
 	}
