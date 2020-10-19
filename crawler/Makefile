@@ -9,3 +9,9 @@ crawler:
 
 crawler2:
 				gcc $(CFLAGS) crawler2.c $(LIBS) -o $@
+
+crawler3:
+				gcc $(CFLAGS) crawler3.c $(LIBS) -o $@
+
+crawler_step5:
+				gcc $(CFLAGS) crawler_step5.c $(LIBS) -o $@
