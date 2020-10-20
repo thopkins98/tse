@@ -15,3 +15,10 @@ crawler3:
 
 crawler_step5:
 				gcc $(CFLAGS) crawler_step5.c $(LIBS) -o $@
+
+crawler_final:
+				gcc $(CFLAGS) crawler_final.c $(LIBS) -o $@
+
+clean:
+	rm -f crawler crawler2 crawler3 crawler_step5 crawler_final
+	rm -f ../test/*
