@@ -22,6 +22,7 @@ bool s(void* p, const void* key);
 int32_t pagesave(webpage_t *pagep, int id, char *dirname);
 void crawler(char* seedURL, char* pageDirectory, int maxDepth);
 void pageScanner(webpage_t* page, queue_t* toVisit, hashtable_t* visited);
+void cleanHashtable(void* ep);
 
 // usage: crawler <seedurl> <pagedir> <maxdepth>
 int main(const int argc, const char *argv[]){
@@ -43,7 +44,7 @@ int main(const int argc, const char *argv[]){
 
 	// Check that maxDepth is above 0
 	if (atoi(argv[3]) < 0){
-		fprintf(stderr, "maxDepth %d is invalid.\n", atoi(argv[2]));
+		fprintf(stderr, "maxDepth %u is invalid.\n", atoi(argv[2]));
 		free(pageDirectory);
         free(pageDirectory_clean);
 		free(seedURL);
@@ -72,6 +73,7 @@ int main(const int argc, const char *argv[]){
 
 	free(pageDirectory);
 	free(pageDirectory_clean);
+    free(seedURL);
 
 	exit(EXIT_SUCCESS);
 
@@ -99,49 +101,34 @@ void crawler(char* seedURL, char* pageDirectory, int maxDepth){
         }
         pageID+=1;
     }
-	
 
-	
-
-	//webpage_t *wbtoprint= NULL;
-	char *urltoprint= NULL;
-
-	while (pagequeue != NULL) {
-		webpage_t *wbtoprint= (webpage_t *) qget(pagequeue);
-
-		if ( wbtoprint == NULL ) {
-			break;
-		}
-
-		urltoprint = webpage_getURL(wbtoprint);
-		printf("%s\n", urltoprint);
-		webpage_delete((void *) wbtoprint);
-
-	}
+    happly(hasht, cleanHashtable);
+	qclose(pagequeue);
+    free(hasht);
+ 
 }
 
 void pageScanner(webpage_t* page, queue_t* toVisit, hashtable_t* visited){
+    printf("Scannning %s\n", webpage_getURL(page));
     int pos=0;
     char *result;
 	while ((pos= webpage_getNextURL(page, pos, &result)) >0) {
 		printf("Found url: %s\n", result);
         if (!NormalizeURL(result)){
 			fprintf(stderr, "could not normalize URL\n");
-			free(result);
 		} 
 		else if(!IsInternalURL(result)){
 			fprintf(stderr, "URL is not internal\n");
-			free(result);
         }
 		else if(hsearch(visited, s, result, strlen(result)) != NULL){
 			fprintf(stderr, "URL was already visited\n");
-			free(result);
 		}
         else{
 			webpage_t* newPage = webpage_new(result, webpage_getDepth(page)+1, NULL);
             qput(toVisit, (void *) newPage);
             hput(visited, (void *) newPage, result, strlen(result));
         }
+        free(result);
 	}
 }
 
@@ -157,7 +144,7 @@ bool s(void* p, const void* key) {
 }
 
 int32_t pagesave(webpage_t *pagep, int id, char *dirname){
-
+    printf("Saving %s\n", webpage_getURL(pagep));
 	FILE *fp;
 	char fname[12]; //10
 	sprintf(fname, "%s/%d", dirname, id);
@@ -170,6 +157,10 @@ int32_t pagesave(webpage_t *pagep, int id, char *dirname){
 					webpage_getHTML(pagep));
 
 	fclose(fp);
-	
 	return 0;
+}
+
+
+void cleanHashtable(void* ep){
+    webpage_delete((webpage_t*)ep);
 }
