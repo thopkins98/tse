@@ -37,4 +37,4 @@ int32_t pagesave(webpage_t *pagep, int id, char *dirnm);
  *
  * returns: non-NULL for success; NULL otherwise
  */
-webpage_t pageload(int id, char *dirnm);
+webpage_t* pageload(int id, char *dirnm);

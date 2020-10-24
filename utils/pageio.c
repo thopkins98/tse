@@ -1,5 +1,5 @@
 /* pageio.c --- 
- * 
+1;95;0c1;95;0c1;95;0c * 
  * 
  * Author: Agampodi I. Abeysekara
  * Created: Sat Oct 24 03:26:18 2020 (-0400)
@@ -12,15 +12,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <webpage.h>
+#include "webpage.h"
 #include "hash.h"
 #include "queue.h"
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include "pageio.h"
 
 
-static char* full_dirname( char* dirnm, int id );
+
 
 /*
 
@@ -41,12 +42,7 @@ int32_t pagesave(webpage_t *pagep, int id, char*dirnm) {
 	sprintf(fname, "%s/%d", dirnm, id);
 
 	fp = fopen(fname, "w+");
-
-	fprintf(fp, "%s \n%d \n%d \n%s \n",
-										 webpage_getURL(pagep),
-										 webpage_getDepth(pagep),
-										 webpage_getHTMLlen(pagep),
-										 webpage_getHTML(pagep));
+	fprintf(fp, "%s \n%d \n%d \n%s \n",webpage_getURL(pagep),webpage_getDepth(pagep),webpage_getHTMLlen(pagep),webpage_getHTML(pagep));
 
 	fclose(fp);
 
@@ -58,48 +54,54 @@ int32_t pagesave(webpage_t *pagep, int id, char*dirnm) {
 
 
 webpage_t* pageload(int id, char* dirnm) {
-
-	char* fdir= full_dirname(dirnm, id);
+	webpage_t *res= NULL;
+	int ENOUGH=snprintf(NULL, 0, "%d", id);
+	char fname[12 + ENOUGH];
+	sprintf(fname, "%s/%d", dirnm, id);
 	
-	FILE *input= fopen(fdir, "r");
+	printf("%s\n", fname);
+	FILE *input= fopen(fname, "r");
 
-	char *url= (char *) malloc(sizeof(char *));
+	char *url=	(char *) malloc(sizeof(char));
 	
-	fscanf(input, "%s", url);
+		
+	if (fscanf(input, "%s", url)!=1) {
+		fprintf(stderr, "Error reading url");
+		return res;
+		}
+	
 	int depth;
-	fscanf(input, "%d", &depth);
-	int html_len;
-	fscanf(input, "%d", &html_len);
-	//int c=0;
-	char html[html_len];
-	
-	while ( !feof(input)) {
-		char c= fgetc(input);
-		strcat(html, &c); 
+	if (fscanf(input, "%d", &depth) != 1) {
+		fprintf(stderr, "Error reading depth");
+		return res;
+		
 	}
+	int html_len;
+	
+	if (fscanf(input, "%d", &html_len)!=1) {
+		fprintf(stderr, "Error reading html length");
+		return res;
+	}
+	printf("The length of html is: %d", html_len);
+	char c;
+	char *html= (char *) malloc(sizeof(char) * (html_len + 1));
+	int index=0;
 
-	webpage_t *res= webpage_new(url, depth, html);
+	do {
+		c= (char) fgetc(input);
+		html[index]=c;
+		index++;
+	}
+	while(!feof(input));
+
+	res= webpage_new(url, depth, html);
 
 	fclose(input);
-	free(url);
-
+	//free(url);
+	//free(html);
 	return res;
 
 	
 }
 
-static char* full_dirname( char* dirnm, int id ) {
-	// This checks how much space must be allocate for id in array
-	int ENOUGH=snprintf(NULL, 0, "%d", id);
-	char num[ENOUGH];
-	sprintf(num, "%d", id);
-	char slash[2]= "/";
-
-	char* dir_end= strcat(slash, num);
-
-	char* res= strcat(dirnm, dir_end);
-
-	return res;
-
-
-}
+	
