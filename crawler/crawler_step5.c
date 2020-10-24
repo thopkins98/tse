@@ -17,9 +17,10 @@
 #include "queue.h"
 #include <string.h>
 #include <stdint.h>
+#include "pageio.h"
 
 bool s(void* p, const void* key);
-int32_t pagesave(webpage_t *pagep, int id, char *dirname);
+//int32_t pagesave(webpage_t *pagep, int id, char *dirname);
 
 int main(void){
 
@@ -38,7 +39,16 @@ int main(void){
 		exit(EXIT_FAILURE);
 
 	}
+	char *url= webpage_getURL(w1);
+	int num= webpage_getDepth(w1);
+	int len= webpage_getHTMLlen(w1);
+	char *html= webpage_getHTML(w1);
 
+	//	printf("%s \n", url);
+	//printf("%d \n", num);
+	//printf("%d \n", len);
+	//printf("%s \n", html);
+	
 	int pos=0;
 	char *result;
 	bool internal= false;
@@ -70,8 +80,8 @@ int main(void){
 		free(result);
 	 
 	}
-
-	pagesave(w1, 1, "../pages");
+	
+	pagesave(w1, 1, "../pages2");
 	webpage_delete((void *) w1);
 
 	//webpage_t *wbtoprint= NULL;
@@ -111,20 +121,20 @@ bool s(void* p, const void* key) {
 	return false;
 }
 
-int32_t pagesave(webpage_t *pagep, int id, char *dirname){
+//int32_t pagesave(webpage_t *pagep, int id, char *dirname){
 
-	FILE *fp;
-	char fname[12]; //10
-	sprintf(fname, "%s/%d", dirname, id);
+//FILE *fp;
+//char fname[12]; //10
+//sprintf(fname, "%s/%d", dirname, id);
 
-	fp = fopen(fname, "w+");
-	fprintf(fp, "%s \n%d \n%d \n%s \n",
-					webpage_getURL(pagep),
-					webpage_getDepth(pagep),
-					webpage_getHTMLlen(pagep),
-					webpage_getHTML(pagep));
-
-	fclose(fp);
+//fp = fopen(fname, "w+");
+//fprintf(fp, "%s \n%d \n%d \n%s \n",
+//				webpage_getURL(pagep),
+//				webpage_getDepth(pagep),
+//				webpage_getHTMLlen(pagep),
+//				webpage_getHTML(pagep));
+//
+//fclose(fp);
 	
-	return 0;
-}
+//return 0;
+//}
