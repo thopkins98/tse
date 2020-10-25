@@ -96,7 +96,6 @@ webpage_t* pageload(int id, char* dirnm) {
 		fprintf(stderr, "Error reading html length");
 		return res;
 	}
-	printf("The length of html is: %d\n", html_len);
 
 	char c;
 
@@ -107,7 +106,6 @@ webpage_t* pageload(int id, char* dirnm) {
 
 	while ((c=fgetc(input2)) != EOF) {
 
-		printf("%c", c);
 		html[index]=c;
 		index++;
 		
