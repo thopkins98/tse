@@ -17,10 +17,21 @@
 
 int main(void) {
 	printf("hello\n");
-	char dir2[10]="../pages";;
-	webpage_t *w2= pageload(12, dir2);
+	//char dir2[10]="../pages";;
+	printf("File 1: \n");
+	webpage_t *w2= pageload(1, "../pages");
+	
 	char *html= webpage_getHTML(w2);
-	printf("%s\n", html);
-	webpage_delete((void *) w2);
+	//printf("%s\n", html);
+	pagesave(w2, 12, "../pages");
+
+	printf("File 12: \n");
+	webpage_t *w3 = pageload(12, "../pages");
+	char *html2= webpage_getHTML(w3);
+  if (strcmp(html, html2) == 0 ) {
+	printf("Success");
+   }
+	webpage_delete( w2);
+	webpage_delete( w3);
 	return 0;
 }

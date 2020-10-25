@@ -1,5 +1,5 @@
 /* pageio.c --- 
-1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c * 
+1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c * 
  * 
  * Author: Agampodi I. Abeysekara
  * Created: Sat Oct 24 03:26:18 2020 (-0400)
@@ -42,7 +42,7 @@ int32_t pagesave(webpage_t *pagep, int id, char*dirnm) {
 	sprintf(fname, "%s/%d", dirnm, id);
 
 	fp = fopen(fname, "w+");
-	fprintf(fp, "%s \n%d \n%d \n%s \n",webpage_getURL(pagep),webpage_getDepth(pagep),webpage_getHTMLlen(pagep),webpage_getHTML(pagep));
+	fprintf(fp, "%s\n%d\n%d\n%s",webpage_getURL(pagep),webpage_getDepth(pagep),webpage_getHTMLlen(pagep),webpage_getHTML(pagep));
 
 	fclose(fp);
 
@@ -68,21 +68,12 @@ webpage_t* pageload(int id, char* dirnm) {
 	char fname[12];
 	sprintf(fname, "%s/%d", dirnm, id);
 	
-	FILE *input= fopen(fname, "r");
-
-	// getting the length of the url to allocate memory
-
-	int str_len=0;
-	while (fgetc(input) != '\n' ) {
-		str_len++;
-	}
-	fclose(input);
 
 	//new input to scan url, depth, html length, html
 	
 	FILE *input2= fopen(fname, "r");
 
-	char *url=	(char *) malloc(sizeof(char)*str_len);
+	char url[100];
 
 	// if statements check if the fscanf was successful
 	
@@ -105,34 +96,30 @@ webpage_t* pageload(int id, char* dirnm) {
 		fprintf(stderr, "Error reading html length");
 		return res;
 	}
-	//printf("The length of html is: %d", html_len);
+	printf("The length of html is: %d\n", html_len);
 
 	char c;
 
 	// Allocating memory for html. Feel like I did something wrong from this point onwards.
 	
-	char *html= (char *) malloc(sizeof(char) * (html_len + 1));
+	char *html= (char *) malloc(sizeof(char) * (html_len + 3));
 	int index=0;
 
-	do {
-		c= (char) fgetc(input2);
+	while ((c=fgetc(input2)) != EOF) {
+
+		printf("%c", c);
 		html[index]=c;
 		index++;
-	}
-	while(!feof(input2));
+		
 
-	//do {
-	//	html[index]=' ';
-	//		index++;
-	//}
-	//while(index != html_len);
+	} 
+	
+	//printf("%d\n", index);
 
-	html[index]='\0';
-	//printf("%s", html);
+	html[index-1]='\0';
+	
 	res= webpage_new(url, depth, html);
 	
-	free(url);
-	free(html);
 	fclose(input2);
 	
 	return res;
