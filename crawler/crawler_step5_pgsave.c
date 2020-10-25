@@ -1,18 +1,17 @@
-/* crawler3.c --- 
-1;95;0c * 
+/* crawler_step5_pgsave.c --- 
+1;95;0c1;95;0c * 
  * 
  * Author: Agampodi I. Abeysekara
- * Created: Sun Oct 18 17:31:33 2020 (-0400)
+ * Created: Sun Oct 25 06:10:07 2020 (-0400)
  * Version: 
  * 
  * Description: 
  * 
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-//#include "webpage.h"
+#include "webpage.h"
 #include "hash.h"
 #include "queue.h"
 #include <string.h>
@@ -20,7 +19,6 @@
 #include "pageio.h"
 
 bool s(void* p, const void* key);
-//int32_t pagesave(webpage_t *pagep, int id, char *dirname);
 
 int main(void){
 
@@ -81,7 +79,7 @@ int main(void){
 	 
 	}
 	
-	pagesave(w1, 1, "../pages2");
+	pagesave(w1, 1, "../pages2");;
 	webpage_delete((void *) w1);
 
 	//webpage_t *wbtoprint= NULL;
@@ -120,21 +118,3 @@ bool s(void* p, const void* key) {
 
 	return false;
 }
-
-//int32_t pagesave(webpage_t *pagep, int id, char *dirname){
-
-//FILE *fp;
-//char fname[12]; //10
-//sprintf(fname, "%s/%d", dirname, id);
-
-//fp = fopen(fname, "w+");
-//fprintf(fp, "%s \n%d \n%d \n%s \n",
-//			webpage_getURL(pagep),
-//			webpage_getDepth(pagep),
-//			webpage_getHTMLlen(pagep),
-//			webpage_getHTML(pagep));
-//
-//fclose(fp);
-	
-//return 0;
-//}

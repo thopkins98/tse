@@ -19,11 +19,11 @@ crawler3:
 crawler_step5:
 				gcc $(CFLAGS) crawler_step5.c $(LIBS) -o $@
 
-crawler_step5_v2:
-				gcc $(CLFAGS) crawler_step5_v2.c $(LIBS) -o $@
-
 crawler_step5_pgload:
 				gcc $(CFLAGS) crawler_step5_pgload.c $(LIBS) -o $@
+
+crawler_step5_pgsave:
+				gcc $(CFLAGS) crawler_step5_pgsave.c $(LIBS) -o $@
 
 crawler_final:
 				gcc $(CFLAGS) crawler_final.c $(LIBS) -o $@
