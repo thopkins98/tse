@@ -105,6 +105,8 @@ webpage_t* pageload(int id, char* dirnm) {
 	char *html= (char *) malloc(sizeof(char) * (html_len + 3));
 	int index=0;
 
+	c=fgetc(input2);
+	
 	while ((c=fgetc(input2)) != EOF) {
 
 		printf("%c", c);
@@ -116,7 +118,7 @@ webpage_t* pageload(int id, char* dirnm) {
 	
 	//printf("%d\n", index);
 
-	html[index-1]='\0';
+	html[index]='\0';
 	
 	res= webpage_new(url, depth, html);
 	
