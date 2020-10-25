@@ -50,42 +50,67 @@ int32_t pagesave(webpage_t *pagep, int id, char*dirnm) {
 
 }
 
+/*
+This method is supposed to load a saved page and return a page.
 
+The parameters:
+id: The id of the page saved. An integer.
+dirname: A character pointer which contains the name of the directory that contains the page.
+
+ */
 
 
 webpage_t* pageload(int id, char* dirnm) {
+
 	webpage_t *res=NULL;
-	int ENOUGH=snprintf(NULL, 0, "%d", id);
-	char fname[12 + ENOUGH];
+
+	// the directory name will be assumed to be less than 12 characters eg: ../pages
+	char fname[12];
 	sprintf(fname, "%s/%d", dirnm, id);
 	
 	FILE *input= fopen(fname, "r");
+
+	// getting the length of the url to allocate memory
+
 	int str_len=0;
 	while (fgetc(input) != '\n' ) {
 		str_len++;
 	}
 	fclose(input);
+
+	//new input to scan url, depth, html length, html
+	
 	FILE *input2= fopen(fname, "r");
+
 	char *url=	(char *) malloc(sizeof(char)*str_len);
-			
+
+	// if statements check if the fscanf was successful
+	
 	if (fscanf(input2, "%s", url)!=1) {
 		fprintf(stderr, "Error reading url");
 		return res;
 		}
 	
 	int depth;
+	
 	if (fscanf(input2, "%d", &depth) != 1) {
 		fprintf(stderr, "Error reading depth");
 		return res;
 		
 	}
-	int html_len;	
+
+	int html_len;
+	
 	if (fscanf(input2, "%d", &html_len)!=1) {
 		fprintf(stderr, "Error reading html length");
 		return res;
 	}
 	//printf("The length of html is: %d", html_len);
+
 	char c;
+
+	// Allocating memory for html. Feel like I did something wrong from this point onwards.
+	
 	char *html= (char *) malloc(sizeof(char) * (html_len + 1));
 	int index=0;
 
@@ -109,8 +134,7 @@ webpage_t* pageload(int id, char* dirnm) {
 	free(url);
 	free(html);
 	fclose(input2);
-	//free(url);
-	//free(html);
+	
 	return res;
 
 	
