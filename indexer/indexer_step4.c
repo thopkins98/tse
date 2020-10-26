@@ -78,12 +78,16 @@ int main(void) {
 	}
 
 	free(wordpointer);
+	free(wordsearch);
 	webpage_delete(w1); 
-
+	free(pagep);
+	
 	//report sum
 	happly(ht, sumwords);
 	printf("Total Word Count: %d\n", sum);
-	
+
+	hclose(ht);
+	qclose(queuep);
 	return 0;
 }
 
@@ -91,8 +95,8 @@ void sumwords(void *ep){
 	word_t *w = (word_t *)ep;
 	page_t *p = NULL;
 	queue_t *q = (queue_t *)w->qp;
-	while ((p=(page_t *)qget(q) != NULL){
-		p = (page_t *)qget(q);
+	while ((p=(page_t *)qget(q)) != NULL){
+	
 		sum=sum + p->count;
 	}
 	return;
