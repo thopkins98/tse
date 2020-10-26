@@ -21,8 +21,13 @@
 
 typedef struct word{
 	char *word;
-	int count;
+	queue_t *qp;
 } word_t;
+
+typedef struct page{
+	int pageid;
+	int count;
+} page_t;
 
 char* NormalizeWord(char *str);
 bool searchfunc(void* elementp, const void* searchkeyp);
@@ -37,17 +42,30 @@ int main(void) {
 	word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
 	word_t *wordsearch = (word_t *)malloc(sizeof(word_t));
 	hashtable_t *ht = hopen(100);
+	queue_t *queuep = qopen();
+	page_t *pagep = (page_t *)malloc(sizeof(page_t));
 	
 	char *result;
 	int pos=0;
 	while ((pos = webpage_getNextWord(w1, pos, &result)) > 0 ) {
 		if (strcmp(NormalizeWord(result), "") != 0) {
 			if ((wordsearch = (word_t *)hsearch(ht, s, result, strlen(result))) != NULL){
-				wordsearch->count = wordsearch->count + 1;	
+				queuep = wordsearch->qp;
+				pagep = (page_t *)qget(queuep);
+				if(pagep->pageid == 1){
+					pagep->count = pagep->count + 1;
+					qput(queuep, (void *)pagep);
+				}else{
+					qput(queuep, (void *)pagep);
+				}
+				
 				free(result);
 			}else{
 				wordpointer->word = result;
-				wordpointer->count = 1;
+				pagep->pageid = 1;
+				pagep->count = 1;
+				qput(queuep, (void *)pagep);
+				wordpointer->qp = queuep;
 				hput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
 				free(result);
 			}
@@ -58,25 +76,25 @@ int main(void) {
 		}
 		
 	}
-	
+
+	free(wordpointer);
+	webpage_delete(w1); 
+
 	//report sum
 	happly(ht, sumwords);
 	printf("Total Word Count: %d\n", sum);
-
-
-	hclose(ht);
-	free(wordpointer);
-	free(wordsearch);
-	webpage_delete(w1); 
 	
-	
-	//free(ht);
 	return 0;
 }
 
 void sumwords(void *ep){
 	word_t *w = (word_t *)ep;
-	sum=sum + w->count;
+	page_t *p = NULL;
+	queue_t *q = (queue_t *)w->qp;
+	while ((p=(page_t *)qget(q) != NULL){
+		p = (page_t *)qget(q);
+		sum=sum + p->count;
+	}
 	return;
 }
 
