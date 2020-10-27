@@ -20,7 +20,7 @@
 #include "queue.h"
 
 typedef struct word{
-	char *word;
+	char word[100];
 	queue_t *qp;
 } word_t;
 
@@ -39,55 +39,61 @@ int sum=0;
 
 int main(void) {
 	webpage_t *w1= pageload(1, "../pages");
-	word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
 	word_t *wordsearch = (word_t *)malloc(sizeof(word_t));
-	hashtable_t *ht = hopen(100);
-	queue_t *queuep = qopen();
-	page_t *pagep = (page_t *)malloc(sizeof(page_t));
+	hashtable_t *ht = hopen(200);
+	queue_t *queuesearch = qopen();
+	page_t *pagesearch = (page_t *)malloc(sizeof(page_t));
+	
 	
 	char *result;
 	int pos=0;
 	while ((pos = webpage_getNextWord(w1, pos, &result)) > 0 ) {
 		if (strcmp(NormalizeWord(result), "") != 0) {
 			if ((wordsearch = (word_t *)hsearch(ht, s, result, strlen(result))) != NULL){
-				queuep = wordsearch->qp;
-				pagep = (page_t *)qget(queuep);
-				if(pagep->pageid == 1){
-					pagep->count = pagep->count + 1;
-					qput(queuep, (void *)pagep);
+				queuesearch = wordsearch->qp;
+				pagesearch = (page_t *)qget(queuesearch);
+				if(pagesearch->pageid == 1){
+					pagesearch->count = pagesearch->count + 1;
+					qput(queuesearch, (void *)pagesearch);
 				}else{
-					qput(queuep, (void *)pagep);
+					qput(queuesearch, (void *)pagesearch);
 				}
 				
 				free(result);
 			}else{
-				wordpointer->word = result;
-				pagep->pageid = 1;
-				pagep->count = 1;
-				qput(queuep, (void *)pagep);
+				word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
+				queue_t *queuep = qopen();
+				page_t *pagepointer = (page_t *)malloc(sizeof(page_t));
+				strcpy(wordpointer->word, result);
+				pagepointer->pageid = 1;
+				pagepointer->count = 1;
+				qput(queuep, (void *)pagepointer);
 				wordpointer->qp = queuep;
 				hput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
 				free(result);
 			}
-		}
-	  else {
+		} else {
 			free(result);
 		  continue;
 		}
 		
 	}
 
-	free(wordpointer);
-	free(wordsearch);
-	webpage_delete(w1); 
-	free(pagep);
 	
 	//report sum
 	happly(ht, sumwords);
 	printf("Total Word Count: %d\n", sum);
 
+
+	free(pagesearch);
+	free(wordsearch);
+	webpage_delete(w1);
 	hclose(ht);
+	//qclose(queuep);
+	qclose(queuesearch);
 	qclose(queuep);
+	free(pagepointer);
+
 	return 0;
 }
 

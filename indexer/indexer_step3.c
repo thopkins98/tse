@@ -20,7 +20,7 @@
 #include "queue.h"
 
 typedef struct word{
-	char *word;
+	char word[100];
 	int count;
 } word_t;
 
@@ -34,9 +34,9 @@ int sum=0;
 
 int main(void) {
 	webpage_t *w1= pageload(1, "../pages");
-	word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
+
 	word_t *wordsearch = (word_t *)malloc(sizeof(word_t));
-	hashtable_t *ht = hopen(100);
+	hashtable_t *ht = hopen(200);
 	
 	char *result;
 	int pos=0;
@@ -46,7 +46,9 @@ int main(void) {
 				wordsearch->count = wordsearch->count + 1;	
 				free(result);
 			}else{
-				wordpointer->word = result;
+				word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
+				strcpy(wordpointer->word, result);
+			
 				wordpointer->count = 1;
 				hput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
 				free(result);
@@ -64,13 +66,11 @@ int main(void) {
 	printf("Total Word Count: %d\n", sum);
 
 
-	hclose(ht);
-	free(wordpointer);
 	free(wordsearch);
+	hclose(ht);
 	webpage_delete(w1); 
 	
 	
-	//free(ht);
 	return 0;
 }
 
