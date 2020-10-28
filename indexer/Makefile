@@ -4,7 +4,7 @@ U=../utils
 CFLAGS=-Wall -pedantic -std=c11 -I${U} -L${L} -g
 LIBS=-lutils -lcurl
 
-all: indexer.c indexer_step3.c indexer_step4.c
+all: indexer indexer_step3 indexer_step4
 
 indexer:
 			gcc $(CFLAGS) indexer.c $(LIBS) -o $@
@@ -16,4 +16,4 @@ indexer_step4:
 			gcc $(CFLAGS) indexer_step4.c $(LIBS) -o $@
 
 clean:
-		rm -f indexer indexer_step3.c indexer_step4.c
+		rm -f indexer indexer_step3 indexer_step4

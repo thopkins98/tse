@@ -33,16 +33,18 @@ char* NormalizeWord(char *str);
 bool searchfunc(void* elementp, const void* searchkeyp);
 bool s(void* p, const void* key);
 void sumwords(void *ep);
+void indexCleanup(hashtable_t *index);
+void wordDelete(void *word);
 
 //global variable
 int sum=0;
 
 int main(void) {
 	webpage_t *w1= pageload(1, "../pages");
-	word_t *wordsearch = (word_t *)malloc(sizeof(word_t));
+	word_t *wordsearch = NULL;
+	queue_t *queuesearch = NULL;
+	page_t *pagesearch = NULL;
 	hashtable_t *ht = hopen(200);
-	queue_t *queuesearch = qopen();
-	page_t *pagesearch = (page_t *)malloc(sizeof(page_t));
 	
 	
 	char *result;
@@ -58,7 +60,6 @@ int main(void) {
 				}else{
 					qput(queuesearch, (void *)pagesearch);
 				}
-				
 				free(result);
 			}else{
 				word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
@@ -76,7 +77,7 @@ int main(void) {
 			free(result);
 		  continue;
 		}
-		
+
 	}
 
 	
@@ -84,15 +85,10 @@ int main(void) {
 	happly(ht, sumwords);
 	printf("Total Word Count: %d\n", sum);
 
+	//clean word structs out of hashtable and close it
+	indexCleanup(ht);
 
-	free(pagesearch);
-	free(wordsearch);
 	webpage_delete(w1);
-	hclose(ht);
-	//qclose(queuep);
-	qclose(queuesearch);
-	qclose(queuep);
-	free(pagepointer);
 
 	return 0;
 }
@@ -104,6 +100,7 @@ void sumwords(void *ep){
 	while ((p=(page_t *)qget(q)) != NULL){
 	
 		sum=sum + p->count;
+		free(p);
 	}
 	return;
 }
@@ -139,4 +136,14 @@ char* NormalizeWord(char *str) {
 		return "";
 	}
 	return str;
+}
+
+
+void indexCleanup(hashtable_t *index){
+	happly(index, wordDelete);
+	hclose(index);
+}
+
+void wordDelete(void *currWord){
+	qclose(((word_t*)currWord)->qp);
 }
