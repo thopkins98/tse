@@ -41,9 +41,9 @@ int sum=0;
 
 // expected usage: ./indexer <id> (will run on all pages up to id)
 int main(const int argc, const char *argv[]){
-    int i = atoi(argv[1]);
+    int maxPage = atoi(argv[1]);
 
-    //for(int i = 1; i <= maxPage; i++){
+    for(int i = 1; i <= maxPage; i++){
         webpage_t *w1= pageload(i, "../pagedir");
         word_t *wordsearch = NULL;
         queue_t *queuesearch = NULL;
@@ -91,9 +91,9 @@ int main(const int argc, const char *argv[]){
         //clean word structs out of hashtable and close it
         indexCleanup(ht);
         webpage_delete(w1);
-    //}
+    }
 
-	printf("Total Word Count from pages 1-%d: %d\n", i, sum);
+	printf("Total Word Count from pages 1-%d: %d\n", maxPage, sum);
 	return 0;
 }
 
