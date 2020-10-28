@@ -35,16 +35,19 @@ int sum=0;
 int main(void) {
 	webpage_t *w1= pageload(1, "../pages");
 
-	word_t *wordsearch = (word_t *)malloc(sizeof(word_t));
+
+	word_t *wordsearch = NULL;
 	hashtable_t *ht = hopen(200);
 	
 	char *result;
 	int pos=0;
 	while ((pos = webpage_getNextWord(w1, pos, &result)) > 0 ) {
 		if (strcmp(NormalizeWord(result), "") != 0) {
+		
 			if ((wordsearch = (word_t *)hsearch(ht, s, result, strlen(result))) != NULL){
-				wordsearch->count = wordsearch->count + 1;	
+				wordsearch->count = wordsearch->count + 1;
 				free(result);
+		
 			}else{
 				word_t *wordpointer = (word_t *)malloc(sizeof(word_t));
 				strcpy(wordpointer->word, result);
@@ -53,6 +56,7 @@ int main(void) {
 				hput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
 				free(result);
 			}
+		
 		}
 	  else {
 			free(result);
@@ -66,7 +70,9 @@ int main(void) {
 	printf("Total Word Count: %d\n", sum);
 
 
-	free(wordsearch);
+
+
+	wordsearch = NULL;
 	hclose(ht);
 	webpage_delete(w1); 
 	
