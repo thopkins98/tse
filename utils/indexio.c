@@ -98,20 +98,17 @@ hashtable_t* indexload(int id, char *dirnm){
 		printf("failed to open file\n");
 		return NULL;
 	}
-	printf("opened file\n");
 
 	char wordp[100];
 	int pageid;
 	int count;
 	while (!feof(input2)){
 			fscanf(input2, "%s", wordp);
-			printf("got word %s\n", wordp);
 			word_t *wpoint = (word_t *)malloc(sizeof(word_t));
 			queue_t *qp = qopen();
 			strcpy(wpoint->word, wordp);
 			wpoint->qp = qp;
 			while(fscanf(input2, "%d %d", &pageid, &count) ==2){
-				printf("%d occurances in %d\n", count, pageid);
 				page_t *p = (page_t *)malloc(sizeof(page_t));
 				p->pageid=pageid;
 				p->count = count;

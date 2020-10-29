@@ -33,7 +33,7 @@ void wordDelete(void *word);
 int sum=0;
 
 typedef struct word{
-	char word[300];
+	char word[100];
 	queue_t *qp;
 } word_t;
 
@@ -83,6 +83,7 @@ int main(void) {
 		}
 
 	}
+
 
 	indexsave(ht, 1, "../indexdir");
 	

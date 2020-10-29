@@ -34,9 +34,9 @@ void wordDelete(void *word);
 
 int main(void) {
     hashtable_t* indexIn = NULL;
-    printf("about to load\n");
+    // Import index from file
     indexIn = indexload(1, "../indexdir");
-
+    // Export the same index to a different directory
     indexsave(indexIn, 1, "../indexdir2");
 
     indexCleanup(indexIn);
