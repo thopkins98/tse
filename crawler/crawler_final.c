@@ -23,6 +23,7 @@ int32_t pagesave(webpage_t *pagep, int id, char *dirname);
 void crawler(char* seedURL, char* pageDirectory, int maxDepth);
 void pageScanner(webpage_t* page, queue_t* toVisit, hashtable_t* visited);
 void cleanHashtable(void* ep);
+void hashCleanup(hashtable_t * hashIn);
 
 // usage: crawler <seedurl> <pagedir> <maxdepth>
 int main(const int argc, const char *argv[]){
@@ -94,18 +95,17 @@ void crawler(char* seedURL, char* pageDirectory, int maxDepth){
 			fprintf(stderr, "Unable to fetch data for %s\n", webpage_getURL(curr));
 		}
         else{
+			if(webpage_getDepth(curr) < maxDepth){
+				pageScanner(curr, pagequeue, hasht);
+			}
             pagesave(curr, pageID, pageDirectory);
 			pageID+=1;
-        }
-        if(webpage_getDepth(curr) < maxDepth){
-            pageScanner(curr, pagequeue, hasht);
         }
         
     }
 
-    happly(hasht, cleanHashtable);
 	qclose(pagequeue);
-    free(hasht);
+	hashCleanup(hasht);
  
 }
 
@@ -158,10 +158,16 @@ int32_t pagesave(webpage_t *pagep, int id, char *dirname){
 					webpage_getHTML(pagep));
 
 	fclose(fp);
+	//free(pagep);
 	return 0;
 }
 
 
 void cleanHashtable(void* ep){
-    webpage_delete((webpage_t*)ep);
+	webpage_delete((webpage_t*)ep);
+}
+
+void hashCleanup(hashtable_t * hashIn){
+	happly(hashIn, cleanHashtable);
+	hclose(hashIn);
 }
