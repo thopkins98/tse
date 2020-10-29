@@ -101,7 +101,7 @@ webpage_t* pageload(int id, char* dirnm) {
 
 	// Allocating memory for html. Feel like I did something wrong from this point onwards.
 	
-	char *html= (char *) malloc(sizeof(char) * (html_len + 3));
+	char *html= (char *) malloc(sizeof(char) * (html_len + 4));
 	int index=0;
 
 	c=fgetc(input2);
