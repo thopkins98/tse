@@ -26,7 +26,7 @@ FILE *fp;
 static void wordSave(void* ep);
 
 typedef struct word{
-	char word[300];
+	char word[100];
 	queue_t *qp;
 } word_t;
 
@@ -48,7 +48,6 @@ typedef struct page{
  */
 int32_t indexsave(hashtable_t *index, int id, char *dirnm){
 
-
 	char fname[20];
 	sprintf(fname, "%s/%d", dirnm, id);
 
@@ -67,7 +66,7 @@ static void wordSave(void* ep){
 	page_t *p = NULL;
 
 	queue_t *q = w->qp;
-	fprintf(fp, "%s: ", key);
+	fprintf(fp, "%s ", key);
 
 	while ((p=(page_t *)qget(q)) != NULL){
 		//printf("Pageid: %d     WCount: %d\n", p->pageid, p->count);
@@ -88,32 +87,39 @@ static void wordSave(void* ep){
 
 hashtable_t* indexload(int id, char *dirnm){
 	
+	
 	hashtable_t *ht = hopen(200);
-
-	char fname[12];
+	
+	char fname[20];
 	sprintf(fname, "%s/%d", dirnm, id);
 	
-	FILE *input2= fopen(fname, "r");
-	printf("opened file");
+	FILE *input2;
+	if ((input2 = fopen(fname, "r")) == NULL){
+		printf("failed to open file\n");
+		return NULL;
+	}
+	printf("opened file\n");
 
-	char *wordp = NULL;
+	char wordp[100];
 	int pageid;
 	int count;
-	while (fscanf(input2, "%s", wordp) != EOF){
-		printf("%s", wordp);
-		word_t *wpoint = (word_t *)malloc(sizeof(word_t));
-		queue_t *qp = qopen();
-		strcpy(wordp, wpoint->word);
-		wpoint->qp = qp;
-		while(fscanf(input2, "%d %d", &pageid, &count) !=0){
-			page_t *p = (page_t *)malloc(sizeof(page_t));
-			p->pageid=pageid;
-			p->count = count;
-			qput(qp, (void *)p);
-		}
-		hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
+	while (!feof(input2)){
+			fscanf(input2, "%s", wordp);
+			printf("got word %s\n", wordp);
+			word_t *wpoint = (word_t *)malloc(sizeof(word_t));
+			queue_t *qp = qopen();
+			strcpy(wpoint->word, wordp);
+			wpoint->qp = qp;
+			while(fscanf(input2, "%d %d", &pageid, &count) ==2){
+				printf("%d occurances in %d\n", count, pageid);
+				page_t *p = (page_t *)malloc(sizeof(page_t));
+				p->pageid=pageid;
+				p->count = count;
+				qput(qp, (void *)p);
+			}
+			hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
 	}
-	
+	fclose(input2);
 	return ht;
 
 }
