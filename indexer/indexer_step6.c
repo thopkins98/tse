@@ -33,7 +33,7 @@ void wordDelete(void *word);
 int sum=0;
 
 typedef struct word{
-	char word[100];
+	char word[300];
 	queue_t *qp;
 } word_t;
 
@@ -84,9 +84,7 @@ int main(void) {
 
 	}
 
-	printf("about to save\n");
 	indexsave(ht, 1, "../indexdir");
-	printf("saved\n");
 	
 	//clean word structs out of hashtable and close it
 	indexCleanup(ht);

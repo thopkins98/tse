@@ -23,10 +23,10 @@
 //global variable
 FILE *fp;
 
-static void a(void* ep);
+static void wordSave(void* ep);
 
 typedef struct word{
-	char *word;
+	char word[300];
 	queue_t *qp;
 } word_t;
 
@@ -47,34 +47,32 @@ typedef struct page{
  *   <html>
  */
 int32_t indexsave(hashtable_t *index, int id, char *dirnm){
-	printf("into index save");
-	char fname[100];
+
+
+	char fname[20];
 	sprintf(fname, "%s/%d", dirnm, id);
-	printf("about to open file");
-	if ((fp = fopen(fname, "w")) == NULL){
-		printf("failed opening");
-	}
-	//fp = fopen(fname, "w+");
-	printf("opened file");
-	
-	happly(index, a);
+
+	fp = fopen(fname, "w+");
+	happly(index, wordSave);
 	
 
 	fclose(fp);
-	
 	return 0;
 }
 
-static void a(void* ep){
+static void wordSave(void* ep){
 	//char lineentry[100];
 	word_t *w = (word_t *)ep;
 	char *key = w->word;
 	page_t *p = NULL;
+
 	queue_t *q = w->qp;
 	fprintf(fp, "%s: ", key);
+
 	while ((p=(page_t *)qget(q)) != NULL){
-		printf("Pageid: %d     WCount: %d\n", p->pageid, p->count);
-		fprintf(fp, "%d/%d ", p->pageid, p->count);
+		//printf("Pageid: %d     WCount: %d\n", p->pageid, p->count);
+		fprintf(fp, "%d %d ", p->pageid, p->count);
+		free(p);
 	}
 	fprintf(fp, "\n");
 
@@ -87,34 +85,35 @@ static void a(void* ep){
  *
  * returns: non-NULL for success; NULL otherwise
  */
-	hashtable_t* indexload(int id, char *dirnm){
-		
-		hashtable_t *ht = hopen(200);
 
-		char fname[12];
-		sprintf(fname, "%s/%d", dirnm, id);
-		
-		FILE *input2= fopen(fname, "r");
-		printf("opened file");
+hashtable_t* indexload(int id, char *dirnm){
+	
+	hashtable_t *ht = hopen(200);
 
-		char *wordp = NULL;
-		int pageid;
-		int count;
-		while (fscanf(input2, "%s", wordp) != EOF){
-			printf("%s", wordp);
-			word_t *wpoint = (word_t *)malloc(sizeof(word_t));
-			queue_t *qp = qopen();
-			wpoint->word = wordp;
-			wpoint->qp = qp;
-			while(fscanf(input2, "%d %d", &pageid, &count) !=0){
-				page_t *p = (page_t *)malloc(sizeof(page_t));
-				p->pageid=pageid;
-				p->count = count;
-				qput(qp, (void *)p);
-			}
-			hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
+	char fname[12];
+	sprintf(fname, "%s/%d", dirnm, id);
+	
+	FILE *input2= fopen(fname, "r");
+	printf("opened file");
+
+	char *wordp = NULL;
+	int pageid;
+	int count;
+	while (fscanf(input2, "%s", wordp) != EOF){
+		printf("%s", wordp);
+		word_t *wpoint = (word_t *)malloc(sizeof(word_t));
+		queue_t *qp = qopen();
+		strcpy(wordp, wpoint->word);
+		wpoint->qp = qp;
+		while(fscanf(input2, "%d %d", &pageid, &count) !=0){
+			page_t *p = (page_t *)malloc(sizeof(page_t));
+			p->pageid=pageid;
+			p->count = count;
+			qput(qp, (void *)p);
 		}
-		
-		return ht;
-
+		hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
 	}
+	
+	return ht;
+
+}

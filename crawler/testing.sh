@@ -32,18 +32,17 @@ countfiles
 
 make
 
-echo "Test 6: run with valid arguments at depth 2"
-./crawler_final https://thayer.github.io/engs50/ ../pagedir 2 >&/dev/null
-countfiles
+#echo "Test 6: run with valid arguments at depth 2"
+#./crawler_final https://thayer.github.io/engs50/ ../pagedir 2 >&/dev/null
+#countfiles
 
-make
+#make
 
 echo "Test 7: run with directory that is unwritable"
 chmod -w ../pagedir
 ./crawler_final https://thayer.github.io/engs50/ ../pagedir 2
 chmod +w ../pagedir
 
-echo "Test 8: run valgrind with depth 1"
-valgrind --leak-check=full crawler_final https://thayer.github.io/engs50/ ../test 1
+
 
 

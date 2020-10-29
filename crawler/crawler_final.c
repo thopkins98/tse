@@ -87,7 +87,7 @@ void crawler(char* seedURL, char* pageDirectory, int maxDepth){
     hput(hasht, (void *)w1, seedURL, strlen(seedURL));
     
 
-    int pageID = 0;
+    int pageID = 1;
     webpage_t* curr;
     while((curr = qget(pagequeue)) != NULL){
         if(!webpage_fetch(curr)){
