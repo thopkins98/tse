@@ -95,11 +95,12 @@ void crawler(char* seedURL, char* pageDirectory, int maxDepth){
 		}
         else{
             pagesave(curr, pageID, pageDirectory);
+			pageID+=1;
         }
         if(webpage_getDepth(curr) < maxDepth){
             pageScanner(curr, pagequeue, hasht);
         }
-        pageID+=1;
+        
     }
 
     happly(hasht, cleanHashtable);
@@ -146,7 +147,7 @@ bool s(void* p, const void* key) {
 int32_t pagesave(webpage_t *pagep, int id, char *dirname){
     printf("Saving %s\n", webpage_getURL(pagep));
 	FILE *fp;
-	char fname[12]; //10
+	char fname[20]; //10
 	sprintf(fname, "%s/%d", dirname, id);
 
 	fp = fopen(fname, "w+");

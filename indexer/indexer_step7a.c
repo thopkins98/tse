@@ -41,7 +41,7 @@ bool pageSearch(void* p, const void* key);
 //global variable
 int sum=0;
 
-// expected usage: ./indexer <id> (will run on all pages up to id)
+// expected usage: ./indexer <pagedir> <indexnm>
 int main(const int argc, char *argv[]){
     // Argument checks
 	if ( argc != 3 ) {
@@ -99,6 +99,7 @@ int main(const int argc, char *argv[]){
                         newPage->count = 1;
                         qput(queuesearch, (void *)newPage);
                     }
+    
                     free(result);
                 }else{
                     //printf("new word\n");
@@ -112,12 +113,12 @@ int main(const int argc, char *argv[]){
                     wordpointer->qp = queuep;
                     hput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
                     free(result);
+                    sum +=1;
                 }
             } else {
                 free(result);
                 continue;
             }
-
         }
         fileID+=1;
         webpage_delete(w1);
@@ -125,6 +126,7 @@ int main(const int argc, char *argv[]){
     int indexID = atoi(argv[2]);
     //save hashtable
     indexsave(ht, indexID, "../indexdir2");
+    printf("Total Word Count from pages 1-%d: %d\n", fileID-1, sum);
     //clean word structs out of hashtable and close it
     indexCleanup(ht);
     webpage_delete(w1);
