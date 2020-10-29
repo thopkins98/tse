@@ -5,7 +5,7 @@ CFLAGS=-Wall -pedantic -std=c11 -I${U} -L${L} -g
 LIBS= -lutils -lcurl
 
 # all: indexer indexer_step3 indexer_step4 indexer_step5 indexer_step6
-all: clean utils iotest_6 indexer_step6
+all: clean utils iotest_6 indexer_step6 indexer_step7a
 
 indexer:
 			gcc $(CFLAGS) indexer.c $(LIBS) -o $@
@@ -25,8 +25,8 @@ indexer_step6:
 iotest_6:
 			gcc $(CFLAGS) iotest_6.c $(LIBS) -o $@
 
-indexer_step7:
-			gcc $(CFLAGS) indexer_step7.c $(LIBS) -o $@
+indexer_step7a:
+			gcc $(CFLAGS) indexer_step7a.c $(LIBS) -o $@
 
 utils:
 			(cd ../utils; make clean)
@@ -34,3 +34,4 @@ utils:
 
 clean:
 		rm -f indexer indexer_step3 indexer_step4 indexer_step5 indexer_step6 iotest_6
+		rm -f indexer_step7 indexer_step7a

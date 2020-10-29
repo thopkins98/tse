@@ -65,13 +65,17 @@ webpage_t* pageload(int id, char* dirnm) {
 	webpage_t *res=NULL;
 
 	// the directory name will be assumed to be less than 12 characters eg: ../pages
-	char fname[12];
+	char fname[20];
 	sprintf(fname, "%s/%d", dirnm, id);
 	
 
 	//new input to scan url, depth, html length, html
 	
-	FILE *input2= fopen(fname, "r");
+	FILE *input2;
+	if ((input2 = fopen(fname, "r")) == NULL){
+		//printf("file %s does not exist\n", fname);
+        return res;
+	}
 
 	char url[100];
 

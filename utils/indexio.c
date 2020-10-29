@@ -67,7 +67,7 @@ static void wordSave(void* ep){
 
 	queue_t *q = w->qp;
 	fprintf(fp, "%s ", key);
-
+	//printf("got word %s\n", key);
 	while ((p=(page_t *)qget(q)) != NULL){
 		//printf("Pageid: %d     WCount: %d\n", p->pageid, p->count);
 		fprintf(fp, "%d %d ", p->pageid, p->count);

@@ -37,7 +37,7 @@ int main(void) {
     // Import index from file
     indexIn = indexload(1, "../indexdir");
     // Export the same index to a different directory
-    indexsave(indexIn, 1, "../indexdir2");
+    indexsave(indexIn, 1, "../indexcomp");
 
     indexCleanup(indexIn);
     return 0;

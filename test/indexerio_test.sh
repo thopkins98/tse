@@ -5,11 +5,11 @@
 # Description: 
 
 if [ ! -d ../indexdir ] ; then
-				mkdir indexdir
+				mkdir ../indexdir
 fi
 
-if [ ! -d ../indexdir2 ] ; then
-				mkdir indexdir2
+if [ ! -d ../indexcomp ] ; then
+				mkdir ../indexcomp
 fi
 
 make -f Makefile > /dev/null
