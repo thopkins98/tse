@@ -1,10 +1,18 @@
+# Ignore all files
 *
+# Unignore everything with an extension
 !*.*
+# Unignore directories
 !*/
-*.o
 
+# Ignore .o files
+*.o
+# Ignore EMACS buffer files
 *~
+# Ignore .crawler files
+.crawler
+
+
 \#*\#
 .\#*
-/pagedir/*
 *.dSYM
