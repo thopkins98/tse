@@ -26,7 +26,7 @@ FILE *fp;
 static void a(void* ep);
 
 typedef struct word{
-	char word[100];
+	char *word;
 	queue_t *qp;
 } word_t;
 
@@ -47,11 +47,16 @@ typedef struct page{
  *   <html>
  */
 int32_t indexsave(hashtable_t *index, int id, char *dirnm){
-
-	char fname[12];
+	printf("into index save");
+	char fname[100];
 	sprintf(fname, "%s/%d", dirnm, id);
-
-	fp = fopen(fname, "w+");
+	printf("about to open file");
+	if ((fp = fopen(fname, "w")) == NULL){
+		printf("failed opening");
+	}
+	//fp = fopen(fname, "w+");
+	printf("opened file");
+	
 	happly(index, a);
 	
 
@@ -65,7 +70,7 @@ static void a(void* ep){
 	word_t *w = (word_t *)ep;
 	char *key = w->word;
 	page_t *p = NULL;
-	queue_t *q = (queue_t *)w->qp;
+	queue_t *q = w->qp;
 	fprintf(fp, "%s: ", key);
 	while ((p=(page_t *)qget(q)) != NULL){
 		printf("Pageid: %d     WCount: %d\n", p->pageid, p->count);
@@ -88,24 +93,25 @@ static void a(void* ep){
 
 		char fname[12];
 		sprintf(fname, "%s/%d", dirnm, id);
-
-		FILE*input2= fopen(fname, "r");
+		
+		FILE *input2= fopen(fname, "r");
+		printf("opened file");
 
 		char *wordp = NULL;
-		int pid;
+		int pageid;
 		int count;
 		while (fscanf(input2, "%s", wordp) != EOF){
+			printf("%s", wordp);
 			word_t *wpoint = (word_t *)malloc(sizeof(word_t));
 			queue_t *qp = qopen();
 			wpoint->word = wordp;
-			do{
-				fscanf(input2, "%c%d", wordp, pid);
-				fscanf(input2, "%c%d", wordp, count);
+			wpoint->qp = qp;
+			while(fscanf(input2, "%d %d", &pageid, &count) !=0){
 				page_t *p = (page_t *)malloc(sizeof(page_t));
-				p->id=pid;
+				p->pageid=pageid;
 				p->count = count;
 				qput(qp, (void *)p);
-			}while(wordp != '\n');
+			}
 			hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
 		}
 		
