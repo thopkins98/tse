@@ -25,6 +25,9 @@ indexer_step6:
 iotest_6:
 			gcc $(CFLAGS) iotest_6.c $(LIBS) -o $@
 
+indexer_step7:
+			gcc $(CFLAGS) indexer_step7.c $(LIBS) -o $@
+
 utils:
 			(cd ../utils; make clean)
 			(cd ../utils; make all)
