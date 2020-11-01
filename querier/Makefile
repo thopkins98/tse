@@ -8,3 +8,5 @@ LIBS=-lutils -lcurl
 query:
 			gcc $(CFLAGS) query.c $(LIBS) -o $@
 
+query2:
+			gcc $(CFLAGS) query2.c $(LIBS) -o $@
