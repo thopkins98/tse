@@ -10,3 +10,9 @@ query:
 
 query2:
 			gcc $(CFLAGS) query2.c $(LIBS) -o $@
+
+query3:
+			gcc $(CFLAGS) query3.c $(LIBS) -o $@
+
+query4:
+			gcc $(CFLAGS) query4.c $(LIBS) -o $@
