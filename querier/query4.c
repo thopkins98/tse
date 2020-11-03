@@ -38,7 +38,8 @@ typedef struct page{
 }page_t;
 
 void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank);
-
+void indexCleanup(hashtable_t *index);
+void wordDelete(void *currWord);
 
 int main(void) {
 
@@ -148,6 +149,7 @@ int main(void) {
 											dp->rank = pagep->count;
 										}
 									}
+									free(pagep);
 								}
 							}
 						}
@@ -159,7 +161,8 @@ int main(void) {
 				printf("copying over to master array\n");
 				arrayadd(docqueue_master, docqueue, paramcount);
 				printf("closing index\n");
-				hclose(index1);
+				indexCleanup(index1);
+				//hclose(index1);
 				i = i + 1;
 			}
  
@@ -218,4 +221,13 @@ void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank){
 		}
 	}
 	return;
+}
+
+void indexCleanup(hashtable_t *index){
+	happly(index, wordDelete);
+	hclose(index);
+}
+
+void wordDelete(void *currWord){
+	qclose(((word_t*)currWord)->qp);
 }

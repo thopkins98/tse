@@ -37,6 +37,9 @@ typedef struct page{
 	int count;
 }page_t;
 
+void indexCleanup(hashtable_t *index);
+void wordDelete(void *currWord);
+
 int main(void) {
 
 	//hashtable_t *index1 = indexload(1, "../indexdir2");
@@ -139,6 +142,7 @@ int main(void) {
 									dp->rank = pagep->count;
 								}
 							}
+							free(pagep);
 						}
 					}
 				}
@@ -167,7 +171,8 @@ int main(void) {
 		
 		printf("\n");
 		//rebuild the index
-		hclose(index1);
+		indexCleanup(index1);
+		//hclose(index1);
 	
 		printf(">");
 	
@@ -186,4 +191,13 @@ bool s(void* p, const void* key){
 		return true;
 	}
 	return false;
+}
+
+void indexCleanup(hashtable_t *index){
+	happly(index, wordDelete);
+	hclose(index);
+}
+
+void wordDelete(void *currWord){
+	qclose(((word_t*)currWord)->qp);
 }
