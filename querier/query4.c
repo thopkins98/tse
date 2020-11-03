@@ -40,6 +40,7 @@ typedef struct page{
 void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank);
 void indexCleanup(hashtable_t *index);
 void wordDelete(void *currWord);
+void arrayCleanup(doc_t *array[]);
 
 int main(void) {
 
@@ -112,18 +113,18 @@ int main(void) {
 		
 			int i=0;
 			//loop over entire input string
-			printf("beginning query check\n");
+			//printf("beginning query check\n");
 			while (i < count) {
 				doc_t *docqueue[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 				int paramcount = 0;
 				hashtable_t *index1 = indexload(1, "../indexdir2");
 				//loop over individual strings separated by "ORs"
-				printf("looping over first and chain\n");
+				//printf("looping over first and chain\n");
 				while ( strcmp(word_arr[i], "or") != 0 ){
 					
-						if ( strcmp(word_arr[i], "and") == 0 || strcmp(word_arr[i], "or") == 0 || strlen(word_arr[i]) < 3) {
+						if ( strcmp(word_arr[i], "and") == 0 || strlen(word_arr[i]) < 3) {
 					
-							continue;
+							//printf("found an and\n");
 						}
 						else {
 
@@ -158,9 +159,9 @@ int main(void) {
 							break;
 						}
 				}
-				printf("copying over to master array\n");
+				//printf("copying over to master array\n");
 				arrayadd(docqueue_master, docqueue, paramcount);
-				printf("closing index\n");
+				//printf("closing index\n");
 				indexCleanup(index1);
 				//hclose(index1);
 				i = i + 1;
@@ -180,7 +181,8 @@ int main(void) {
 			}
 			
 		}
-		
+
+		arrayCleanup(docqueue_master);
 		printf("\n");
 	
 		printf(">");
@@ -209,14 +211,21 @@ void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank){
 			continue;
 		}
 		if ( (arrmaster[h] == NULL) && (arrtemp[h] != NULL) ){
-			arrmaster[h] = arrtemp[h];
-			//free(arrtemp[h]);
+			if ((arrtemp[h]->totalmatches) < minrank){
+				free(arrtemp[h]);
+				arrtemp[h] = NULL;
+			}else {
+				arrmaster[h] = arrtemp[h];
+				arrtemp[h] = NULL;
+			}
 		}else {
 			if ((arrtemp[h]->totalmatches) < minrank){
 				free(arrtemp[h]);
+				arrtemp[h] = NULL;
 			}else {
 				arrmaster[h]->rank = arrmaster[h]->rank + arrtemp[h]->rank;
 				free(arrtemp[h]);
+				arrtemp[h] = NULL;
 			}
 		}
 	}
@@ -231,3 +240,14 @@ void indexCleanup(hashtable_t *index){
 void wordDelete(void *currWord){
 	qclose(((word_t*)currWord)->qp);
 }
+
+void arrayCleanup(doc_t *array[]){
+	for (int i=0; i<10; i++){
+		if (array[i] != NULL){
+			//free(array[i]);
+			array[i] = NULL;
+		}
+	}
+	return;
+}
+					 
