@@ -41,12 +41,14 @@ void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank);
 void indexCleanup(hashtable_t *index);
 void wordDelete(void *currWord);
 void arrayCleanup(doc_t *array[]);
+void arrayInit(doc_t *array[]);
 
 int main(void) {
 
-	//hashtable_t *index1 = indexload(1, "../indexdir2");
+	static int ARR_SIZE = 100;
 
-	doc_t *docqueue_master[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+	doc_t *docqueue_master[ARR_SIZE];
+	arrayInit(docqueue_master);
 
 	char buffer[100];
 
@@ -66,7 +68,7 @@ int main(void) {
 		int punc_check=0;
 	
 
-		//hashtable_t *index1 = indexload(1, "../indexdir2");
+	
 		
 		while ((word= strtok(ptr, " \t\n"))) {
 			ptr= NULL;
@@ -115,7 +117,9 @@ int main(void) {
 			//loop over entire input string
 			//printf("beginning query check\n");
 			while (i < count) {
-				doc_t *docqueue[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+				doc_t *docqueue[ARR_SIZE];
+				arrayInit(docqueue);
+				
 				int paramcount = 0;
 				hashtable_t *index1 = indexload(1, "../indexdir2");
 				//loop over individual strings separated by "ORs"
@@ -170,7 +174,7 @@ int main(void) {
 		}
 		printf("Printing Ranks:\n");
 		//print out the rankings
-		for (int k = 0; k < 10; k++){
+		for (int k = 0; k < ARR_SIZE; k++){
 			if (docqueue_master[k] == NULL){
 				continue;
 			}else {
@@ -204,9 +208,9 @@ bool s(void* p, const void* key){
 	return false;
 }
 
-void arrayadd(doc_t* arrmaster[10], doc_t* arrtemp[10], int minrank){
+void arrayadd(doc_t* arrmaster[], doc_t* arrtemp[], int minrank){
 
-	for (int h=0; h < 10; h++){
+	for (int h=0; h < 100; h++){
 		if (arrtemp[h] == NULL){
 			continue;
 		}
@@ -242,7 +246,7 @@ void wordDelete(void *currWord){
 }
 
 void arrayCleanup(doc_t *array[]){
-	for (int i=0; i<10; i++){
+	for (int i=0; i < 100; i++){
 		if (array[i] != NULL){
 			//free(array[i]);
 			array[i] = NULL;
@@ -250,4 +254,10 @@ void arrayCleanup(doc_t *array[]){
 	}
 	return;
 }
-					 
+
+void arrayInit(doc_t *array[]){
+	for (int i=0; i < 100; i++){
+		array[i] = NULL;
+	}
+	return;
+}
