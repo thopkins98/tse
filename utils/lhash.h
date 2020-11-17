@@ -52,8 +52,7 @@ void* lhsearch(lhash_t *lht, bool (*searchfn)(void *elementp, const void* keyp),
 
 /* Remove key from hashtable */
 
-//void lhremove(lhash_t *lht, bool (*searchfn)(void *elementp, const void* keyp), const void* skeyp);
-
+void* lhremove(lhash_t *lht, bool (*searchfn) (void* elementp, const void* keyp), const char* key, int32_t keylen);
 /* Combine two hashtables */
 
 //void lhconcat(lhash_t *lht1, lhash_t *lht2);
