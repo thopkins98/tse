@@ -5,7 +5,7 @@ CFLAGS=-Wall -pedantic -std=c11 -I${U} -L${L} -g
 LIBS= -lutils -lcurl
 
 
-all: step1_test test
+all: step1_test test1 indexer_multi
 
 step1_test:
 			gcc $(CFLAGS) step1_test.c $(LIBS) -o $@
@@ -25,6 +25,9 @@ concurrent2_test1:
 concurrent2:
 			gcc $(CFLAGS) concurrent2.c $(LIBS) -o concurrent2 -lpthread
 
+indexer_multi:
+			gcc $(CFLAGS) indexer_multi.c $(LIBS) -o $@ -lpthread
+
 
 
 utils:
@@ -32,4 +35,4 @@ utils:
 			(cd ../utils; make all)
 
 clean:
-			rm -f step1_test test
+			rm -f step1_test test indexer_multi

@@ -107,7 +107,7 @@ void* lhsearch(lhash_t *lht, bool (*searchfn) (void* elementp, const void* keyp)
 	void *tmpelement= NULL;
 	pthread_mutex_lock(&tmp->m);
 	tmpelement= hsearch(tmp->h, searchfn, key, keylen);
-	pthread_mutex_lock(&tmp->m);
+	pthread_mutex_unlock(&tmp->m);
 
 	return tmpelement;
 

@@ -18,6 +18,7 @@
 #include <webpage.h>
 #include "hash.h"
 #include "queue.h"
+#include "lhash.h"
 #include "indexio.h"
 
 //global variable
@@ -115,6 +116,69 @@ hashtable_t* indexload(int id, char *dirnm){
 				qput(qp, (void *)p);
 			}
 			hput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
+	}
+	fclose(input2);
+	return ht;
+
+}
+
+
+/*
+ * lockindexsave -- version of indexsave that will work with a locked
+ * hash table used while multithreading the indexer.
+ *
+ * returns: 0 for success; nonzero otherwise
+ */
+int32_t lockindexsave(lhash_t *index, int id, char *dirnm){
+
+	char fname[20];
+	sprintf(fname, "%s/%d", dirnm, id);
+
+	fp = fopen(fname, "w+");
+	lhapply(index, wordSave);
+	
+
+	fclose(fp);
+	return 0;
+}
+
+
+/*
+ * lockindexload -- version of indexload that will work with a locked
+ * hash table used while multithreading the indexer.
+ *
+ * returns: non-NULL for success; NULL otherwise
+ */
+lhash_t* lockindexload(int id, char *dirnm){
+	
+	
+	hashtable_t *ht = lhopen();
+	
+	char fname[20];
+	sprintf(fname, "%s/%d", dirnm, id);
+	
+	FILE *input2;
+	if ((input2 = fopen(fname, "r")) == NULL){
+		printf("failed to open file\n");
+		return NULL;
+	}
+
+	char wordp[100];
+	int pageid;
+	int count;
+	while (!feof(input2)){
+			fscanf(input2, "%s", wordp);
+			word_t *wpoint = (word_t *)malloc(sizeof(word_t));
+			queue_t *qp = qopen();
+			strcpy(wpoint->word, wordp);
+			wpoint->qp = qp;
+			while(fscanf(input2, "%d %d", &pageid, &count) ==2){
+				page_t *p = (page_t *)malloc(sizeof(page_t));
+				p->pageid=pageid;
+				p->count = count;
+				qput(qp, (void *)p);
+			}
+			lhput(ht, (void *)wpoint, wpoint->word, strlen(wpoint->word));
 	}
 	fclose(input2);
 	return ht;

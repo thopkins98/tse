@@ -17,6 +17,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <webpage.h>
+#include "lhash.h"
 #include "hash.h"
 
 typedef struct word word_t;
@@ -42,3 +43,21 @@ int32_t indexsave(hashtable_t *index, int id, char *dirnm);
  * returns: non-NULL for success; NULL otherwise
  */
 hashtable_t* indexload(int id, char *dirnm);
+
+
+/*
+ * lockindexsave -- version of indexsave that will work with a locked
+ * hash table used while multithreading the indexer.
+ *
+ * returns: 0 for success; nonzero otherwise
+ */
+int32_t lockindexsave(lhash_t *index, int id, char *dirnm);
+
+
+/*
+ * lockindexload -- version of indexload that will work with a locked
+ * hash table used while multithreading the indexer.
+ *
+ * returns: non-NULL for success; NULL otherwise
+ */
+lhash_t* lockindexload(int id, char *dirnm);
