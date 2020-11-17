@@ -47,6 +47,7 @@ void *indexer(void *crawlerDirIn);
 int sum=0;
 lqueue_t *pagesToIndex;
 lhash_t *ht;
+pthread_mutex_t mutx;
 
 // expected usage: ./indexer <pagedir> <indexnm> <threads>
 int main(const int argc, char *argv[]){
@@ -97,10 +98,12 @@ int main(const int argc, char *argv[]){
         sprintf(crawlFileName, "%s/%d", argv[1], fileID);
         fclose(dirCount);
     }
-    printf("Made queue of filenames\n");
+    free(crawlFileName);
+    //printf("Made queue of filenames\n");
 
 
     ht = lhopen(); //Open global locked hashtable
+    pthread_mutex_init(&mutx, NULL);
 
     // Create specified number of threads
     int numThreads = atoi(argv[3]);
@@ -110,14 +113,14 @@ int main(const int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
     }
-    printf("created all threads\n");
+    printf("created %d threads\n", numThreads);
     // Join all threads when finished
     for(int i = 0; i < numThreads; i++){
         if(pthread_join(threads[i], NULL)!=0){
             exit(EXIT_FAILURE);
         }
     }
-    printf("joined all threads\n");
+    printf("joined %d threads\n", numThreads);
 
     int indexID = atoi(argv[2]);
     //save hashtable
@@ -125,7 +128,8 @@ int main(const int argc, char *argv[]){
     printf("Total Word Count from pages 1-%d: %d\n", fileID-1, sum);
     //clean word structs out of hashtable and close it
     indexCleanup(ht);
-    
+    lqclose(pagesToIndex);
+    pthread_mutex_destroy(&mutx);
 
 	return 0;
 }
@@ -178,7 +182,9 @@ void *indexer(void *crawlerDirIn){
                     wordpointer->qp = queuep;
                     lhput(ht, (void *)wordpointer, wordpointer->word, strlen(wordpointer->word));
                     free(result);
+                    pthread_mutex_lock(&mutx);
                     sum +=1;
+                    pthread_mutex_unlock(&mutx);
                 }
             } else {
                 free(result);
@@ -186,6 +192,7 @@ void *indexer(void *crawlerDirIn){
             }
         }
         webpage_delete(w1);
+        free(currFileAdd);
     }
     return crawlerDirIn;
 }
