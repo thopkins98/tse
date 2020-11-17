@@ -16,6 +16,7 @@
 #include "queue.h"
 #include "lqueue.h"
 #include <unistd.h>
+#include <stdio.h>
 
 typedef struct lqueueStruct{
 	queue_t *qp;
@@ -52,6 +53,9 @@ int32_t lqput(lqueue_t *lqp, void *elementp){
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
 	
 	pthread_mutex_lock(&tmp->m);
+	if (lqp == NULL) {
+		return 1;
+	}
 	qput(tmp->qp, elementp);
 	pthread_mutex_unlock(&tmp->m);
 
@@ -62,6 +66,10 @@ int32_t lqput(lqueue_t *lqp, void *elementp){
 int32_t lqput_delay(lqueue_t *lqp, void *elementp){
 
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
+
+	if (lqp == NULL) {
+		return 1;
+	}
 	
 	pthread_mutex_lock(&tmp->m);
 	qput(tmp->qp, elementp);
@@ -74,7 +82,13 @@ int32_t lqput_delay(lqueue_t *lqp, void *elementp){
 
 void* lqget(lqueue_t *lqp){
 
+
+	if (lqp == NULL) {
+		return NULL;
+	}
+	
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
+
 	
 	void *tmpelement = NULL;
 	pthread_mutex_lock(&tmp->m);
@@ -86,6 +100,9 @@ void* lqget(lqueue_t *lqp){
 
 void* lqget_delay(lqueue_t *lqp){
 
+	if (lqp == NULL) {
+		return NULL;
+	}
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
 	
 	void *tmpelement = NULL;
@@ -100,7 +117,12 @@ void* lqget_delay(lqueue_t *lqp){
 
 void lqapply(lqueue_t *lqp, void (*fn)(void* elementp)){
 
+	if (lqp == NULL ) {
+		printf("NUll queue\n");
+		return;
+	}
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
+
 	pthread_mutex_lock(&tmp->m);
 	qapply(tmp->qp, fn);
 	pthread_mutex_unlock(&tmp->m);
@@ -112,15 +134,32 @@ void* lqsearch(lqueue_t *lqp,
 							 bool (*searchfn)(void* elementp, const void* keyp),
 							 const void* skeyp){
 
+	if (lqp == NULL) {
+		return NULL;
+	}
+	
 	lqueueStruct_t *tmp = (lqueueStruct_t *)lqp;
 	void *tmpelement = NULL;
 	pthread_mutex_lock(&tmp->m);
 	tmpelement = qsearch(tmp->qp, searchfn, skeyp);
-	pthread_mutex_lock(&tmp->m);
+	pthread_mutex_unlock(&tmp->m);
   
 	return tmpelement;
 }
 
 void* lqremove(lqueue_t *lqp,
 							 bool (*searchfn)(void* elementp, const void* keyp),
-							 const void* skeyp);
+							 const void* skeyp){
+	if (lqp == NULL) {
+		return NULL;
+	}
+
+	lqueueStruct_t *tmp= (lqueueStruct_t *) lqp;
+	void *tmpelement= NULL;
+	pthread_mutex_lock(&tmp->m);
+	tmpelement= qremove(tmp->qp, searchfn, skeyp);
+	pthread_mutex_unlock(&tmp->m);
+
+	return tmpelement;
+
+}

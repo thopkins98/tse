@@ -1,5 +1,5 @@
 /* test2.c --- 
-1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c * 
+1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c1;95;0c * 
  * 
  * Author: Agampodi I. Abeysekara
  * Created: Sun Nov 15 02:04:08 2020 (-0500)
@@ -64,7 +64,7 @@ int main(void) {
 	printf("%s\n", p5->key);
 	lhput(ht, (void *) p5, p5->key, strlen(p5->key));  
 
-	printf("Checking if elements have been added to the queue successfully using hsearch\n");
+	printf("Checking if elements have been added to the queue successfully\n");
 	
 	test_t* res= (test_t *) lhsearch(ht, search, "This", strlen("This"));
 
@@ -93,14 +93,6 @@ int main(void) {
 	//free(p3);
 	//free(p4);
 	//free(p5);
-
-	printf("Removing one 'test' using lhremove\n");
-
-	test_t *res5 = lhremove(ht, search, "test", strlen("test"));
-	//free(test_t);
-
-	printf("The element removed is : %s, with id: %d\n", res5->key, res5->id);
-	free(res5);
 	lhclose(ht);
 	
 }
