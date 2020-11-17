@@ -79,14 +79,14 @@ int main(void) {
 
 
 void *tfunc1(void *argp) {
-	concurrent_t *p1= make_test("First_item", 1);
-	concurrent_t *p2= make_test("Third_item", 3);
+	concurrent_t *p1= make_test("First_process", 1);
+	concurrent_t *p2= make_test("First_process", 2);
 	
 	printf("Thread 1: locking hashtable and inserting data\n");
 
 	lhput_delay(lht, (void *)p1, p1->key, strlen(p1->key));
 
-	printf("Thread 1: Inserting new data to hashtable\n");
+	printf("Thread 1: Inserting same data to form a queue\n");
 
 	lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
 
@@ -98,7 +98,7 @@ void *tfunc1(void *argp) {
 
 void *tfunc2(void *argp) {
 
-	concurrent_t *p3= make_test("Second_item", 2);
+	concurrent_t *p3= make_test("Second_process", 3);
 
 	printf("Thread 2: attempting to access hashtable\n");
 

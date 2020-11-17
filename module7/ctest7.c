@@ -1,13 +1,14 @@
-/* concurrent2.c --- 
-1;95;0c1;95;0c * 
+/* ctest7.c --- 
+ * 
  * 
  * Author: Agampodi I. Abeysekara
- * Created: Sun Nov 15 04:45:51 2020 (-0500)
+ * Created: Tue Nov 17 02:48:53 2020 (-0500)
  * Version: 
  * 
  * Description: 
  * 
  */
+
 
 #include <string.h>
 #include <stdint.h>
@@ -58,18 +59,19 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Checking for items in hashtable\n");
+	printf("Deleting 'Third_process' in hashtable\n");
 
-	//concurrent_t *res1= (concurrent_t*) lhsearch(lht, search, "First_process", strlen("First_process"));
+	concurrent_t *res1= (concurrent_t*) lhsearch(lht, search, "Third_process", strlen("Third_process"));
 
-	//if (res1 == NULL ) {
-	//	printf("No result");
-	//}
-	//printf("The item found is: %s, with id: %d\n", res1->key, res1->id);
-
+	if (res1 == NULL ) {
+		printf("Item does not exist in hashtable.\n");
+	}
+	else {
+	printf("The item deleted is: %s, with id: %d\n", res1->key, res1->id);
+	}
 	//concurrent_t *res2= (concurrent_t*) lhsearch(lht, search, "Second_process", strlen("Second_process"));                 
   //printf("The item found is: %s, with id: %d\n", res2->key, res2->id); 
-
+	printf("Items that exist in the hashtable are: \n");
 	lhapply(lht, print);
 	lhclose(lht);
 
@@ -79,16 +81,16 @@ int main(void) {
 
 
 void *tfunc1(void *argp) {
-	concurrent_t *p1= make_test("First_item", 1);
-	concurrent_t *p2= make_test("Third_item", 3);
+	concurrent_t *p1= make_test("First_process", 1);
+	//concurrent_t *p2= make_test("First_process", 2);
 	
 	printf("Thread 1: locking hashtable and inserting data\n");
 
 	lhput_delay(lht, (void *)p1, p1->key, strlen(p1->key));
 
-	printf("Thread 1: Inserting new data to hashtable\n");
+	//printf("Thread 1: Inserting same data to form a queue\n");
 
-	lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
+	//lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
 
 	printf("Thread 1: hashtable use complete, data inserted\n");
 
@@ -98,7 +100,7 @@ void *tfunc1(void *argp) {
 
 void *tfunc2(void *argp) {
 
-	concurrent_t *p3= make_test("Second_item", 2);
+	concurrent_t *p3= make_test("Second_process", 2);
 
 	printf("Thread 2: attempting to access hashtable\n");
 

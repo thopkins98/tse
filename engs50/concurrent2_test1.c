@@ -1,8 +1,8 @@
-/* concurrent2.c --- 
-1;95;0c1;95;0c * 
+/* concurrent2_test1.c --- 
+ * 
  * 
  * Author: Agampodi I. Abeysekara
- * Created: Sun Nov 15 04:45:51 2020 (-0500)
+ * Created: Sun Nov 15 06:12:20 2020 (-0500)
  * Version: 
  * 
  * Description: 
@@ -79,18 +79,18 @@ int main(void) {
 
 
 void *tfunc1(void *argp) {
-	concurrent_t *p1= make_test("First_item", 1);
-	concurrent_t *p2= make_test("Third_item", 3);
+	concurrent_t *p1= make_test("First_process", 1);
+	//concurrent_t *p2= make_test("First_process", 2);
 	
 	printf("Thread 1: locking hashtable and inserting data\n");
 
 	lhput_delay(lht, (void *)p1, p1->key, strlen(p1->key));
 
-	printf("Thread 1: Inserting new data to hashtable\n");
+	//printf("Thread 1: Inserting same data to form a queue\n");
 
-	lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
+	//lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
 
-	printf("Thread 1: hashtable use complete, data inserted\n");
+	//printf("Thread 1: hashtable use complete, data inserted\n");
 
 	return argp;
 
@@ -98,7 +98,7 @@ void *tfunc1(void *argp) {
 
 void *tfunc2(void *argp) {
 
-	concurrent_t *p3= make_test("Second_item", 2);
+	concurrent_t *p3= make_test("Second_process", 2);
 
 	printf("Thread 2: attempting to access hashtable\n");
 

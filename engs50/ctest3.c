@@ -58,7 +58,7 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Checking for items in hashtable\n");
+	//printf("Checking for items in hashtable\n");
 
 	//concurrent_t *res1= (concurrent_t*) lhsearch(lht, search, "First_process", strlen("First_process"));
 
@@ -70,27 +70,26 @@ int main(void) {
 	//concurrent_t *res2= (concurrent_t*) lhsearch(lht, search, "Second_process", strlen("Second_process"));                 
   //printf("The item found is: %s, with id: %d\n", res2->key, res2->id); 
 
-	lhapply(lht, print);
+	//lhapply(lht, print);
 	lhclose(lht);
 
 	return 0;
 
 }
 
-
 void *tfunc1(void *argp) {
-	concurrent_t *p1= make_test("First_item", 1);
-	concurrent_t *p2= make_test("Third_item", 3);
+	//concurrent_t *p1= make_test("First_process", 1);
+	//concurrent_t *p2= make_test("First_process", 2);
 	
-	printf("Thread 1: locking hashtable and inserting data\n");
+	printf("Thread 1: locking hashtable\n");
 
-	lhput_delay(lht, (void *)p1, p1->key, strlen(p1->key));
+	//lhput_delay(lht, (void *)p1, p1->key, strlen(p1->key));
 
-	printf("Thread 1: Inserting new data to hashtable\n");
+	//printf("Thread 1: Inserting same data to form a queue\n");
 
-	lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
+	//lhput_delay(lht, (void *)p2, p2->key, strlen(p2->key));
 
-	printf("Thread 1: hashtable use complete, data inserted\n");
+	printf("Thread 1: hashtable use complete\n");
 
 	return argp;
 
@@ -98,37 +97,13 @@ void *tfunc1(void *argp) {
 
 void *tfunc2(void *argp) {
 
-	concurrent_t *p3= make_test("Second_item", 2);
+	//concurrent_t *p3= make_test("Second_process", 3);
 
 	printf("Thread 2: attempting to access hashtable\n");
 
-	lhput_delay(lht, (void *) p3, p3->key, strlen(p3->key));
+	//lhput_delay(lht, (void *) p3, p3->key, strlen(p3->key));
 
 	printf("Thread 2: hashtable accessed\n");
 
 	return argp;
-}
-
-
-bool search(void* elementp, const void* searchkeyp) {                          
-  concurrent_t* element= (concurrent_t *) elementp;                            
-  char* searchkey= (char *) searchkeyp;                                        
-                                                                               
-  if (strcmp(element->key, searchkey) == 0) {                                  
-    return true;                                                               
-  }
-	return false;
-}
-
-concurrent_t* make_test(char*c , int num) {
-	concurrent_t *res= (concurrent_t *) malloc(sizeof(concurrent_t));
-	strcpy(res->key, c);
-	res->id=num;
-	return res;
-
-}
-
-void print(void *ep) {
-	concurrent_t *res= (concurrent_t *) ep;
-	printf("Key: %s, id: %d\n", res->key, res->id);
 }

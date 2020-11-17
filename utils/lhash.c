@@ -18,6 +18,7 @@
 #include "hash.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct lhashStruct {
 	hashtable_t *h;
@@ -53,6 +54,10 @@ void lhclose(lhash_t *lht) {
 int32_t lhput(lhash_t *lht, void* elementp, const char *key, int keylen) {
 
 	lhashStruct_t *tmp= (lhashStruct_t *) lht;
+
+	if (lht == NULL ) {
+		return 1;
+	}
 	pthread_mutex_lock(&tmp->m);
 	hput(tmp->h, elementp, key, keylen);
 	pthread_mutex_unlock(&tmp->m);
@@ -62,6 +67,9 @@ int32_t lhput(lhash_t *lht, void* elementp, const char *key, int keylen) {
 
 int32_t lhput_delay(lhash_t *lht, void* elementp, const char *key, int keylen) {
 	lhashStruct_t *tmp= (lhashStruct_t *) lht;
+	if (lht == NULL ) {
+		return 1;
+	}
 	hput(tmp->h, elementp, key, keylen);
 	sleep(10);
 	pthread_mutex_unlock(&tmp->m);
@@ -96,6 +104,10 @@ int32_t lhput_delay(lhash_t *lht, void* elementp, const char *key, int keylen) {
 void lhapply(lhash_t *lht, void (*fn)(void* elementp)) {
 
 	lhashStruct_t *tmp= (lhashStruct_t *) lht;
+	if (lht == NULL ) {
+		printf("The hashtable is NULL.\n");
+		return;
+	}
 	pthread_mutex_lock(&tmp->m);
 	happly(tmp->h, fn);
 	pthread_mutex_unlock(&tmp->m);
@@ -104,6 +116,9 @@ void lhapply(lhash_t *lht, void (*fn)(void* elementp)) {
 	
 void* lhsearch(lhash_t *lht, bool (*searchfn) (void* elementp, const void* keyp), const char* key, int32_t keylen) {
 	lhashStruct_t *tmp = (lhashStruct_t *) lht;
+	if (lht == NULL ) {
+		return NULL;
+	}
 	void *tmpelement= NULL;
 	pthread_mutex_lock(&tmp->m);
 	tmpelement= hsearch(tmp->h, searchfn, key, keylen);
@@ -113,4 +128,17 @@ void* lhsearch(lhash_t *lht, bool (*searchfn) (void* elementp, const void* keyp)
 
 }
 
+void* lhremove(lhash_t *lht, bool (*searchfn) (void* elementp, const void* keyp), const char* key, int32_t keylen) {
+	lhashStruct_t *tmp = (lhashStruct_t *) lht;
+	if (lht == NULL ) {
+		return NULL;
+	}
+	void *tmpelement= NULL;
+	pthread_mutex_lock(&tmp->m);
+	tmpelement= hremove(tmp->h, searchfn, key, keylen);
+	pthread_mutex_unlock(&tmp->m);
+
+	return tmpelement;
+
+}
 
