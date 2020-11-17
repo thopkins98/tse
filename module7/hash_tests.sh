@@ -1,5 +1,9 @@
 #!/bin/bash
-
+echo "testing module with 1 thread"
+echo "========================================================================"
+echo "test2: testing all functions with single thread"
+test2
+echo "========================================================================"
 echo "testing modules with 2 threads: lhash apply has been applied to all tests to print results"
 echo "========================================================================"
 echo "ctest3: search for existing element"
